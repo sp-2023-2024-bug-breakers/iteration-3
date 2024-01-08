@@ -1,0 +1,83 @@
+﻿@using Microsoft.AspNetCore.Antiforgery
+@inject IAntiforgery antiforgery
+
+@model IEnumerable<Rabotilnik.Web.ViewModels.Notifications.UserNotificationViewModel>
+
+@{
+    var notificationsCount = (int)ViewData["NotificationsCount"];
+    var tokenSet = antiforgery.GetAndStoreTokens(this.Context);
+}
+
+<!-- Notifications -->
+<div class="header-notifications">
+
+    <!-- Trigger -->
+    <div class="header-notifications-trigger">
+        <a role="button"><i class="icon-feather-bell"></i><span id="notifications-count">@notificationsCount</span></a>
+    </div>
+
+    <!-- Dropdown -->
+    <div class="header-notifications-dropdown">
+
+        <div class="header-notifications-headline">
+            <h4>Notifications</h4>
+            @if (notificationsCount > 0)
+            {
+                <button type="submit" form="mark-all-form" class="mark-as-read ripple-effect-dark" title="Mark all as read" data-tippy-placement="left">
+                    <i class="icon-feather-check-square"></i>
+                </button>
+            }
+        </div>
+
+        <div class="header-notifications-content">
+            <div class="header-notifications-scroll" data-simplebar>
+                <ul>
+                    @if (notificationsCount > 0)
+                    {
+                        @foreach (var notification in Model)
+                        {
+                            <!-- Notification -->
+                            <li class="notifications-not-read">
+                                <a id="notification-link" onclick="MarkNotificationAsRead('@notification.Id');" asp-action="@notification.RedirectAction" asp-controller="@notification.RedirectController" asp-route-id="@notification.RedirectId">
+                                    <span class="notification-icon"><i class="@notification.Icon"></i></span>
+                                    <span class="notification-text">
+                                        <span>@notification.Text</span>
+                                    </span>
+                                </a>
+                            </li>
+                        }
+                    }
+                    else
+                    {
+                        <!-- Notification -->
+                        <li class="notifications-not-read">
+                            <a>
+                                <span class="notification-text">
+                                    <span>There are currently no new notifications.</span>
+                                </span>
+                            </a>
+                        </li>
+                    }
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function MarkNotificationAsRead(id) {
+        fetch('', {
+            method: 'POST',
+            body: JSON.stringify(id),
+            headers: {
+                'Content-Type': 'application/json',
+                '@tokenSet.HeaderName': '@tokenSet.RequestToken'
+            },
+        })
+            .then(res => res.json())
+            .then(obj => {
+                document.getElementById('notifications-count').innerHTML = obj.count;
+            })
+            .catch(error => console.log(error));
+    }
+</script>

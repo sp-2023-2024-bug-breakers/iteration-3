@@ -1,0 +1,40 @@
+﻿@model Rabotilnik.Web.ViewModels.Offers.JobOfferViewModel
+<!-- Bid Acceptance Popup
+================================================== -->
+<div id="@(Model.DialogNumber-1)" class="zoom-anim-dialog mfp-hide small-dialog-1">
+
+    <!--Tabs -->
+    <div class="sign-in-form">
+
+        <ul class="popup-tabs-nav">
+            <li><a href="#tab1">Accept Offer</a></li>
+        </ul>
+
+        <div class="popup-tabs-container">
+
+            <!-- Tab -->
+            <div class="popup-tab-content" id="tab">
+
+                <!-- Welcome Text -->
+                <div class="welcome-text">
+                   <h3>Accept Offer From @Model.FreelancerFirstName @Model.FreelancerLastName for</h3>
+                   
+                    <div class="bid-acceptance margin-top-30">
+                        $@Model.FixedPrice
+                    </div>
+
+                </div>
+
+                <form id="accept-offer-form" asp-action="AcceptOffer" asp-controller="Offers">
+                    <input type="text" hidden name="offerId" value="@Model.Id"/>
+                    <input type="text" hidden name="jobId" value="@Model.JobId"/>
+                </form>
+
+                <!-- Button -->
+                <button class="margin-top-15 button w-100 button-sliding-icon ripple-effect" type="submit" form="accept-offer-form">Accept <i class="icon-material-outline-arrow-right-alt"></i></button>
+
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Bid Acceptance Popup / End -->

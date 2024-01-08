@@ -1,0 +1,75 @@
+﻿@using Rabotilnik.Data.Models
+@using Microsoft.AspNetCore.Identity
+@inject UserManager<ApplicationUser> userManager
+
+@{
+    var user = await userManager.GetUserAsync(User);
+}
+
+<!-- Dashboard Sidebar
+   ================================================== -->
+<div class="dashboard-sidebar">
+    <div class="dashboard-sidebar-inner" data-simplebar>
+        <div class="dashboard-nav-container">
+
+            <!-- Responsive Navigation Trigger -->
+            <a href="#" class="dashboard-responsive-nav-trigger">
+                <span class="hamburger hamburger--collapse">
+                    <span class="hamburger-box">
+                        <span class="hamburger-inner"></span>
+                    </span>
+                </span>
+                <span class="trigger-title">Dashboard Navigation</span>
+            </a>
+
+            <!-- Navigation -->
+            <div class="dashboard-nav">
+                <div class="dashboard-nav-inner">
+                    <ul data-submenu-title="Main">
+                        <li><a asp-action="Index" asp-controller="Dashboard"><i class="icon-material-outline-dashboard"></i> Dashboard</a></li>
+                        <li><a asp-action="All" asp-controller="Messages"><i class="icon-material-outline-question-answer"></i> Messages</a></li>
+                    </ul>
+
+                    <ul data-submenu-title="Manage">
+                        @if (this.User.IsInRole("Freelancer"))
+                        {
+                            <li class="active-submenu">
+                                <a href="javascript:void(0);"><i class="icon-material-outline-business-center"></i> Offers</a>
+                                <ul>
+                                    <li><a asp-action="MyOffers" asp-controller="Offers">My Offers</a></li>
+                                </ul>
+                            </li>
+                        }
+                        else
+                        {
+                            <li class="active-submenu">
+                                <a href="javascript:void(0);"><i class="icon-material-outline-business-center"></i> Jobs</a>
+                                <ul>
+                                    <li><a asp-action="MyJobs" asp-controller="Jobs">My Jobs</a></li>
+                                    <li><a asp-action="AddJob" asp-controller="Jobs">Add a Job</a></li>
+                                </ul>
+                            </li>
+                        }
+                        <li class="active-submenu">
+                            <a href="javascript:void(0);"><i class="icon-material-outline-business-center"></i> Contracts</a>
+                            <ul>
+                                <li><a asp-action="MyContracts" asp-controller="Contracts">My Contracts</a></li>
+                            </ul>
+                        </li>
+                    </ul>
+
+                    <ul data-submenu-title="Account">
+                        <li><a asp-action="Settings" asp-controller="Users"><i class="icon-material-outline-settings"></i> Settings</a></li>
+                        <li>
+                            <a role="button" href="javascript:void(0)" aria-label="logout" onclick="document.getElementById('logout').submit()"><i class="icon-material-outline-power-settings-new"></i>Logout</a>
+                        </li>
+                    </ul>
+                    <form id="logout" class="form-inline" asp-area="Identity" asp-page="/Account/Logout" method="post"></form>
+                </div>
+            </div>
+            <!-- Navigation / End -->
+
+        </div>
+    </div>
+</div>
+<!-- Dashboard Sidebar / End -->

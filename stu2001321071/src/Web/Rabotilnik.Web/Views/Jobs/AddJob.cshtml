@@ -1,0 +1,98 @@
+﻿@using Rabotilnik.Web.ViewModels.Jobs
+
+@model JobInputModel
+
+@{
+    ViewData["Title"] = "Add a Job";
+
+    var categories = Model.Categories.Select(category => new SelectListItem
+    {
+        Text = category.Name,
+        Value = category.Id
+    });
+}
+
+<!-- Dashboard Container -->
+<div class="dashboard-container">
+
+    <partial name="DashboardPartial" />
+
+    <!-- Dashboard Content
+    ================================================== -->
+    <div class="dashboard-content-container" data-simplebar>
+        <div class="dashboard-content-inner">
+
+            <!-- Dashboard Headline -->
+            <div class="dashboard-headline">
+                <h3>Add a Job</h3>
+            </div>
+
+            <!-- Row -->
+            <div class="row">
+
+                <!-- Dashboard Box -->
+                <div class="col-xl-12">
+                    <div class="dashboard-box margin-top-0">
+
+                        <form method="post" asp-action="AddJob" asp-controller="Jobs">
+                            <!-- Headline -->
+                            <div class="headline">
+                                <h3><i class="icon-feather-folder-plus"></i> Job Submission Form</h3>
+                            </div>
+
+                            <div class="content with-padding padding-bottom-10">
+                                <div class="row">
+                                    <div class="col-xl-4">
+                                        <div class="submit-field">
+                                            <h5>Job Title</h5>
+                                            <input asp-for="Title" type="text" class="with-border">
+                                            <span asp-validation-for="Title" class="text-danger"></span>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-xl-4">
+                                        <div class="submit-field">
+                                            <h5>Job Category</h5>
+                                            <select asp-for="CategoryId" class="location-select dropdown with-border" asp-items="categories" data-size="7" title="Select Category">
+                                            </select>
+                                            <span asp-validation-for="CategoryId" class="text-danger"></span>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-xl-4">
+                                        <div class="submit-field">
+                                            <h5>Budget</h5>
+                                            <div class="input-with-icon">
+                                                <input asp-for="Budget" min="10" class="currency with-border" type="number" placeholder="Budget">
+                                                <i class="currency">USD</i>
+                                            </div>
+                                            <span asp-validation-for="Budget" class="text-danger"></span>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-xl-12">
+                                        <div class="submit-field">
+                                            <h5>Job Description</h5>
+                                            <textarea asp-for="Description" cols="30" rows="5" class="with-border"></textarea>
+                                            <span asp-validation-for="Description" class="text-danger"></span>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-xl-12">
+                                        <button asp-route="/Dashboard/Jobs/Add" type="submit" class="button ripple-effect big margin-top-30"><i class="icon-feather-plus"></i> Add a Job</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <!-- Row / End -->
+            <partial name="SmallFooterPartial" />
+
+        </div>
+    </div>
+    <!-- Dashboard Content / End -->
+
+</div>
+<!-- Dashboard Container / End -->
