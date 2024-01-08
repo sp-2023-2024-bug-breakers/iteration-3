@@ -1,0 +1,31 @@
+﻿@{
+    ViewData["Title"] = "All Messages";
+}
+<!-- Dashboard Container -->
+<div class="dashboard-container">
+    <partial name="DashboardPartial" />
+
+    <!-- Dashboard Content
+    ================================================== -->
+    <div class="dashboard-content-container" data-simplebar>
+        <div class="dashboard-content-inner">
+            <!-- Dashboard Headline -->
+
+            <div class="dashboard-headline d-flex justify-content-center">
+                <a href="#small-dialog-2" class="popup-with-zoom-anim button big ripple-effect">New Message</a>
+            </div>
+
+            <div class="messages-container margin-top-0">
+                <!-- Messages -->
+                <div class="messages-inbox">
+                    <vc:all-user-messages></vc:all-user-messages>
+                </div>
+            </div>
+
+            <partial name="SmallFooterPartial" />
+
+        </div>
+    </div>
+</div>
+
+<partial name="SendNewMessagePartial" />

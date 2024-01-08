@@ -1,0 +1,328 @@
+﻿@using Rabotilnik.Common
+@using Rabotilnik.Data.Models
+@using Microsoft.AspNetCore.Identity
+@inject SignInManager<ApplicationUser> signInManager
+@inject UserManager<ApplicationUser> userManager
+
+@{
+    var user = await this.userManager.GetUserAsync(this.User);
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <title>@this.ViewData["Title"] - @GlobalConstants.SystemName</title>
+
+    <script src="~/js/jquery-3.6.0.min.js"></script>
+    <script src="https://js.stripe.com/v3/"></script>
+
+
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/style.css">
+    <link rel="stylesheet" href="~/css/colors/blue.css">
+    @RenderSection("css", required: false)
+
+</head>
+<body>
+    <div id="wrapper">
+        <header id="header-container" class="fullwidth">
+            <!-- Header -->
+            <div id="header">
+            <div class="container">
+            @if (this.signInManager.IsSignedIn(User))
+            {
+                <!-- Left Side Content -->
+                <div class="left-side">
+
+                    <!-- Logo -->
+                    <div id="logo">
+                        <a asp-action="Index" asp-controller="Home"><img src="~/images/logo1.png" alt=""></a>
+                    </div>
+
+
+                    <!-- Main Navigation -->
+                    <nav id="navigation">
+                        <ul id="responsive">
+
+                            @if (this.User.IsInRole("Freelancer"))
+                            {
+                                <li>
+                                    <a href="#">Find Work</a>
+                                    <ul class="dropdown-nav">
+                                        <li>
+                                            <a asp-controller="Jobs" asp-action="All">Browse Jobs</a>
+                                        </li>
+                                    </ul>
+                                </li>
+
+                                <li>
+                                    <a role="button">Offers</a>
+                                    <ul class="dropdown-nav">
+                                        <li>
+                                            <a asp-action="MyOffers" asp-controller="Offers">My Offers</a>
+                                        </li>
+                                    </ul>
+                                </li>
+
+                                <li>
+                                    <a role="button">Contracts</a>
+                                    <ul class="dropdown-nav">
+                                        <li>
+                                            <a asp-action="MyContracts" asp-controller="Contracts">My Contracts</a>
+                                        </li>
+
+                                    </ul>
+                                </li>
+
+                                <li>
+                                    <a href="#">Profile</a>
+                                    <ul class="dropdown-nav">
+                                        <li>
+                                            <a asp-action="Freelancer" asp-controller="Users" asp-route-id="@user.Id">My Profile</a>
+                                        </li>
+                                        <li>
+                                            <a asp-action="Settings" asp-controller="Users">Settings</a>
+                                        </li>
+                                    </ul>
+                                </li>
+                            }
+                            @if (this.User.IsInRole("Employer"))
+                            {
+                                <li>
+                                    <a role="button">Find Talent</a>
+                                    <ul class="dropdown-nav">
+                                        <li>
+                                            <a asp-action="AllFreelancers" asp-controller="Users">Browse for Employees</a>
+                                        </li>
+                                    </ul>
+                                </li>
+
+                                <li>
+                                    <a role="button">Jobs</a>
+                                    <ul class="dropdown-nav">
+                                        <li>
+                                            <a asp-action="MyJobs" asp-controller="Jobs">My Jobs</a>
+                                        </li>
+
+                                        <li>
+                                            <a asp-action="AddJob" asp-controller="Jobs">Add a Job</a>
+                                        </li>
+                                    </ul>
+                                </li>
+
+                                <li>
+                                    <a role="button">Contracts</a>
+                                    <ul class="dropdown-nav">
+                                        <li>
+                                            <a asp-action="MyContracts" asp-controller="Contracts">My Contracts</a>
+                                        </li>
+
+                                    </ul>
+                                </li>
+
+                                <li>
+                                    <a role="button">Profile</a>
+                                    <ul class="dropdown-nav">
+                                        <li>
+                                            <a asp-action="Employer" asp-controller="Users" asp-route-id="@user.Id">My Profile</a>
+                                        </li>
+                                        <li>
+                                            <a asp-action="Settings" asp-controller="Users">Settings</a>
+                                        </li>
+                                    </ul>
+                                </li>
+                            }
+                        </ul>
+                    </nav>
+
+                    <div class="clearfix"></div>
+                    <!-- Main Navigation / End -->
+                </div>
+                <!-- Left Side Content / End -->
+                <!-- Right Side Content / End -->
+
+                <div class="right-side">
+
+                    @{
+                        var firstName = user.FirstName;
+                        var lastName = user.LastName;
+                        var username = user.UserName;
+                        var role = User.IsInRole("Freelancer") ? "Employee" :
+                            User.IsInRole("Employer") ? "Employer" :
+                                "Administrator";
+
+                        var onlineStatus = user.IsOnline ? "status-online" : "status-invisible";
+                    }
+
+                    <div class="header-widget hide-on-mobile">
+                        <vc:all-user-notifications></vc:all-user-notifications>
+                        <vc:all-user-layout-messages></vc:all-user-layout-messages>
+                    </div>
+
+                    <!-- User Menu -->
+                    <div class="header-widget">
+
+                        <!-- Messages -->
+                        <div class="header-notifications user-menu">
+                            <div class="header-notifications-trigger">
+                                <a href="#">
+                                    <div id="user-online-status" class="user-avatar @onlineStatus"><img src="@user.ProfileImageUrl" alt=""></div></a>
+                            </div>
+
+                            <!-- Dropdown -->
+                            <div class="header-notifications-dropdown">
+
+                                <!-- User Status -->
+                                <div class="user-status">
+
+                                    <!-- User Name / Avatar -->
+                                    <div class="user-details ">
+                                        <div id="dropdown-user-online-status" class="user-avatar @onlineStatus"><img src="@user.ProfileImageUrl" alt=""></div>
+                                        <div class="user-name">
+                                            @firstName @lastName
+                                            <span>@role</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <ul class="user-menu-small-nav">
+                                    <li><a asp-action="Index" asp-controller="Dashboard"><i class="icon-material-outline-dashboard"></i> Dashboard</a></li>
+                                    <li><a asp-action="Settings" asp-controller="Users"><i class="icon-material-outline-settings"></i> Settings</a></li>
+
+                                    <li>
+                                        <form id="logout" class="form-inline" asp-area="Identity" asp-page="/Account/Logout" method="post">
+                                            <a role="button" href="javascript:void(0)" aria-label="logout" onclick="document.getElementById('logout').submit()"><i class="icon-material-outline-power-settings-new"></i>Logout</a>
+                                        </form>
+                                    </li>
+                                </ul>
+
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <!-- Mobile Navigation Button -->
+                    <span class="mmenu-trigger">
+                        <button class="hamburger hamburger--collapse" type="button">
+                            <span class="hamburger-box">
+                                <span class="hamburger-inner"></span>
+                            </span>
+                        </button>
+                    </span>
+                </div>
+                <!-- Right Side Content / End -->
+            }
+            else
+            {
+                <div class="left-side">
+                    <!-- Logo -->
+                    <div id="logo">
+                        <a asp-action="Index" asp-controller="Home"><img src="~/images/logo1.png" alt=""></a>
+                    </div>
+                </div>
+                <div class="right-side">
+                    <!-- Main Navigation -->
+                    <nav id="navigation">
+                        <ul id="responsive">
+                            <li>
+                                <a href="/Login">Login</a>
+                            </li>
+                            <li>
+                                <a href="/Register">Sign up</a>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
+            }
+            </div>
+            </div>
+            <!-- Header / End -->
+        </header>
+        <div class="clearfix"></div>
+
+        <partial name="_CookieConsentPartial" />
+        @this.RenderBody()
+
+
+    </div>
+
+    <!-- Scripts
+    ================================================== -->
+    <script src="~/js/jquery-migrate-3.3.2.min.js"></script>
+    <script src="https://unpkg.com/@@popperjs/core@2/dist/umd/popper.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/mmenu.min.js"></script>
+    <script src="~/js/tippy.all.min.js"></script>
+    <script src="~/js/simplebar.min.js"></script>
+    <script src="~/js/bootstrap-slider.min.js"></script>
+    <script src="~/js/bootstrap-select.min.js"></script>
+    <script src="~/js/snackbar.js"></script>
+    <script src="~/js/clipboard.min.js"></script>
+    <script src="~/js/counterup.min.js"></script>
+    <script src="~/js/magnific-popup.min.js"></script>
+    <script src="~/js/slick.min.js"></script>
+    <script src="~/js/custom.js"></script>
+    <script src="~/lib/lodash/lodash.min.js"></script>
+    <script src="~/js/signalr/dist/browser/signalr.js"></script>
+
+    @if (this.signInManager.IsSignedIn(this.User))
+    {
+        <script>
+            var connection = new signalR.HubConnectionBuilder().withUrl("/OnlineHub").build();
+
+            connection.start().then(function () {
+                document.getElementById('user-online-status').setAttribute('class', "user-avatar status-online");
+                document.getElementById('dropdown-user-online-status').setAttribute('class', "user-avatar status-online");
+            }).catch(function (err) {
+                return console.error(err.toString());
+            });
+        </script>
+    }
+
+
+    <!-- Snackbar // documentation: https://www.polonel.com/snackbar/ -->
+    <script>
+        // Snackbar for user status switcher
+        $('#snackbar-user-status label').click(function () {
+            Snackbar.show({
+                text: 'Your status has been changed!',
+                pos: 'bottom-center',
+                showAction: false,
+                actionText: "Dismiss",
+                duration: 3000,
+                textColor: '#fff',
+                backgroundColor: '#383838'
+            });
+        });
+    </script>
+
+
+    <!-- Google Autocomplete -->
+    <script>
+        function initAutocomplete() {
+            var options = {
+                types: ['(cities)'],
+                // componentRestrictions: {country: "us"}
+            };
+
+            var input = document.getElementById('autocomplete-input');
+            var autocomplete = new google.maps.places.Autocomplete(input, options);
+        }
+
+        // Autocomplete adjustment for homepage
+        if ($('.intro-banner-search-form')[0]) {
+            setTimeout(function () {
+                $(".pac-container").prependTo(".intro-search-field.with-autocomplete");
+            }, 300);
+        }
+
+    </script>
+
+    <!-- Google API -->
+    <script src="https://maps.googleapis.com/maps/api/js?key=&libraries=places&callback=initAutocomplete"></script>
+
+    @await this.RenderSectionAsync("Scripts", required: false)
+</body>
+</html>
